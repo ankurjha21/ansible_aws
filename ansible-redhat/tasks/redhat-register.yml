@@ -1,0 +1,9 @@
+---
+- name: playbooks
+  hosts: all
+  sudo: True
+  tasks:
+     - name: register redhat machine
+       redhat_subscription:
+             state: present
+             username:             password:            pool_ids: 8a85f9815b38fdcf015b3902d01f12f3

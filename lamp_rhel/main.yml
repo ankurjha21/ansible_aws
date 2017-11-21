@@ -1,0 +1,6 @@
+---
+- name: web-servers
+  hosts: all  
+  sudo: True
+  roles:
+   - role: mysql 

@@ -1,0 +1,21 @@
+---
+# tasks file for installing httpd on centos7
+
+- name: install httpd ssl releated package
+  yum: name={{ item }} state=present
+  with_items:
+    - mod_ssl
+
+- name: generate ssl private key and certificate
+  shell: openssl req -x509 -batch -days {{ ssl_cert_validate_days }}
+         -sha256 -subj /CN={{ ssl_cert_cn }}
+         -nodes -newkey rsa:2048
+         -keyout {{ ssl_private_key_path }}
+         -out {{ ssl_cert_path }}
+  when: ssl_auto_generate_key_and_cert is defined and ssl_auto_generate_key_and_cert == true
+  notify: restart httpd
+  # We have to restart httpd after we change the cert or private key
+
+- name: template /etc/httpd/conf.d/ssl.conf
+  template: src=etc/httpd/conf.d/ssl.conf.j2 dest=/etc/httpd/conf.d/ssl.conf mode=644 backup=yes
+  notify: restart httpd

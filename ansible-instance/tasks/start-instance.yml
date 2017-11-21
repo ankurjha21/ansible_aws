@@ -1,0 +1,18 @@
+- name: start cloudops instance
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  vars:
+    instance_ids:
+      - 'i-08162af8dc3a27d5a'
+    region: us-east-1
+  tasks:
+    - name: start cloudops instance
+      ec2:
+        instance_ids: '{{ instance_ids }}'
+        region: '{{ region }}'
+        state: running
+        wait: True
+        vpc_subnet_id: subnet-ff3649d5
+        assign_public_ip: yes
+

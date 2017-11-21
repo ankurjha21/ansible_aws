@@ -1,0 +1,27 @@
+---
+# tasks file for installing httpd on centos7
+
+- name: install httpd releated package
+  yum: name={{ item }} state=present
+  with_items:
+    - httpd
+
+- name: template /etc/httpd/conf/httpd.conf
+  template: src=etc/httpd/conf/httpd.conf.j2 dest=/etc/httpd/conf/httpd.conf mode=644 backup=yes
+  notify: restart httpd
+
+- name: check if /etc/httpd/conf.d/ssl.conf existed
+  stat: path=/etc/httpd/conf.d/ssl.conf
+  register: file_existed
+
+- name: delete and backup ssl config file if change ssl from configured to not configured
+  command: mv /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.conf.{{ ansible_date_time.iso8601_micro }}
+  when: file_existed.stat.exists == true and config_ssl is defined and config_ssl == false
+  notify: restart httpd
+
+- name: install httpd on CentOS
+  include: ssl.yml
+  when: config_ssl is defined and config_ssl == true
+
+- name: start and enable httpd
+  service: name=httpd state=started enabled=yes

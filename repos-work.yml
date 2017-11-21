@@ -1,0 +1,21 @@
+- name: Enabling Updating Repositories for RHEL instance
+  hosts: all
+  gather_facts: false
+  connection: local
+  tasks:
+    - name: Enable Repository - Extra RPM's
+      command: subscription-manager repos --enable=rhel-7-server-extras-rpms
+
+    - name: Enable Repository - Server RPM's
+      command: subscription-manager repos --enable=rhel-7-server-rpms
+  
+    - name: Enable Repository - Optional RPM's
+      command: subscription-manager repos --enable=rhel-7-server-optional-rpms
+
+    - name: Remove repository (and clean up left-over metadata)
+      command: yum clean all
+    
+    - name: update yum repository
+      yum:
+          name: '*'
+          state: latest

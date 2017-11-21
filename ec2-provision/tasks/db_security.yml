@@ -1,0 +1,29 @@
+- name: Create security group for DB instances
+  local_action:
+    module: ec2_group
+    name: "DB-everywhere"
+    description: "My Security Group"
+    vpc_id: "subnet-ff3649d5"
+    region: "us-east-1"
+    rules: 
+      - proto: tcp
+        from_port: 3306
+        to_port: 3306
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: 0.0.0.0/0
+  register: aws_sg
+
+- name: Tag the security group with a name
+  local_action:
+    module: ec2_tag
+    resource: "{{aws_sg.group_id}}"
+    region: "us-east-1"
+    state: present
+    tags:
+      Name: "My Security Group Name"
+      env: "production"
+      service: "DB"
+

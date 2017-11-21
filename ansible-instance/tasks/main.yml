@@ -1,0 +1,11 @@
+---
+# tasks file for Instance
+
+- name: starting the instance
+  include: start-instance.yml
+
+- name: stoping the instance
+  include: stop-instance.yml
+
+- name: restarting the instance
+  include: restart-instance.yml
